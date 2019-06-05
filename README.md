@@ -9,7 +9,7 @@ TODO: Delete this and the text above, and describe your gem
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'rails_const_normalizer', git: 'https://github.com/sogasusumu/rails_const_normalizer.git'
+  gem 'rails_const_normalizer', git: 'https://github.com/sogasusumu/rails_const_normalizer.git'
 ```
 
 And then execute:
