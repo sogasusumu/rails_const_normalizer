@@ -26,6 +26,11 @@ module RailsConstNormalizer
       tr('０-９ａ-ｚＡ-Ｚ', '0-9a-zA-Z').gsub(/　/, ' ').gsub(/\s/, '')
     end
 
+    def responder(format = nil)
+      "#{split('#').first.controller(:with_out_suffix)}/#{split('#').last.permit!}_responder"
+          .yield_self { |str| format ? str.send(format) : str.split('/').last }
+    end
+
     # @return [String]
     def controller(format = nil)
       [underscore.with_out_suffix.pluralize, 'controller'].join('_')
@@ -50,7 +55,23 @@ module RailsConstNormalizer
 
     # @return [String]
     def file_name
-      [self, 'rb'].join('.')
+      [self.split('/').last, 'rb'].join('.')
+    end
+
+    # @return [String]
+    def file_path
+      [
+          self.file_path_prefix,
+          [self, 'rb'].join('.')
+      ].join('/')
+    end
+
+    # @return [String]
+    def file_path_prefix
+      return 'controllers' if self.match?(/_controller$/)
+      return 'responders' if self.match?(/_responder$/)
+
+      'models'
     end
 
     # @return [String]

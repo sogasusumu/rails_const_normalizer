@@ -7,6 +7,9 @@ lint:
 test:
 	bundle exec rspec
 
+console:
+	bin/console
+
 pre_commit:
 	lint
 	test

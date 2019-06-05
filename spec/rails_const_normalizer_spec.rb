@@ -61,11 +61,11 @@ RSpec.describe RailsConstNormalizer do
       end
 
       context :has_suffix do
-        let(:receiver) { [base_name.send(format_method), suffix].reject(&:blank?).join('_') }
+        let(:receiver) { [base_name.send(format_method), suffix].reject(&:blank?).join(separator) }
         it_behaves_like :should_return_expected
 
         context :camelize do
-          let(:receiver) { [base_name.send(format_method), suffix].reject(&:blank?).join('_').camelize }
+          let(:receiver) { [base_name.send(format_method), suffix].reject(&:blank?).join(separator).camelize }
           it_behaves_like :should_return_expected
         end
       end
@@ -75,6 +75,7 @@ RSpec.describe RailsConstNormalizer do
       let(:type) { :controller }
       let(:format) { nil }
       let(:suffix) { type.to_s }
+      let(:separator) { '_' }
       let(:expected) { "names_#{suffix}" }
       it_behaves_like :format_variations
 
@@ -107,6 +108,7 @@ RSpec.describe RailsConstNormalizer do
       let(:type) { :model }
       let(:format) { nil }
       let(:suffix) { nil }
+      let(:separator) { '_' }
       let(:expected) { "name" }
       it_behaves_like :format_variations
 
@@ -134,7 +136,42 @@ RSpec.describe RailsConstNormalizer do
       let(:format) { nil }
       let(:suffix) { 'controller' }
       let(:expected) { "resources :names" }
+      let(:separator) { '_' }
       it_behaves_like :format_variations
+    end
+
+    context :responder do
+      let(:type) { :responder }
+      let(:controller) { 'controller_name' }
+      let(:action) { 'index' }
+      let(:receiver) { "#{controller}##{action}" }
+
+      shared_examples :should_return_expected do
+        let(:actual) { receiver.to(:responder, format) }
+        it { expect(actual).to eq expected }
+      end
+
+      let(:format) { nil }
+      let(:expected) { "#{action}_responder" }
+      it_behaves_like :should_return_expected
+
+      context :klass do
+        let(:format) { :klass }
+        let(:expected) { "#{controller.classify.pluralize}::#{action.classify}Responder" }
+        it_behaves_like :should_return_expected
+      end
+
+      context :file_name do
+        let(:format) { :file_name }
+        let(:expected) { "#{action}_responder.rb" }
+        it_behaves_like :should_return_expected
+      end
+
+      context :file_path do
+        let(:format) { :file_path }
+        let(:expected) { "responders/#{controller.pluralize}/#{action}_responder.rb" }
+        it_behaves_like :should_return_expected
+      end
     end
   end
 
