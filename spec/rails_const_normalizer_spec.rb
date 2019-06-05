@@ -173,6 +173,41 @@ RSpec.describe RailsConstNormalizer do
         it_behaves_like :should_return_expected
       end
     end
+
+    context :model_concern do
+      let(:type) { :model_concern }
+      let(:controller) { 'controller_name' }
+      let(:action) { 'index' }
+      let(:model) { 'model_ones' }
+      let(:receiver) { "#{controller}##{action}-#{model}" }
+
+      shared_examples :should_return_expected do
+        let(:actual) { receiver.to(type, format) }
+        it { expect(actual).to eq expected }
+      end
+
+      let(:format) { nil }
+      let(:expected) { "#{model.singularize}" }
+      it_behaves_like :should_return_expected
+
+      context :klass do
+        let(:format) { :klass }
+        let(:expected) { "#{controller.classify.pluralize}::#{action.classify}::#{model.singularize.classify}" }
+        it_behaves_like :should_return_expected
+      end
+
+      context :file_name do
+        let(:format) { :file_name }
+        let(:expected) { "#{model.singularize}.rb" }
+        it_behaves_like :should_return_expected
+      end
+
+      context :file_path do
+        let(:format) { :file_path }
+        let(:expected) { "models/concerns/#{controller.pluralize}/#{action}/#{model.singularize}.rb" }
+        it_behaves_like :should_return_expected
+      end
+    end
   end
 
   describe :actions do

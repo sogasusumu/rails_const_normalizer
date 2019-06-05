@@ -26,6 +26,16 @@ module RailsConstNormalizer
       tr('０-９ａ-ｚＡ-Ｚ', '0-9a-zA-Z').gsub(/　/, ' ').gsub(/\s/, '')
     end
 
+    # @return [String]
+    def model_concern(format = nil)
+      [
+          self.split('-').first.split('#').first.controller(:with_out_suffix),
+          self.split('-').first.split('#').last.permit!,
+          self.split('-').last.model
+      ].yield_self { |arr| format ? arr.join('/').send(format) : arr.last }
+    end
+
+    # @return [String]
     def responder(format = nil)
       "#{split('#').first.controller(:with_out_suffix)}/#{split('#').last.permit!}_responder"
         .yield_self { |str| format ? str.send(format) : str.split('/').last }
@@ -71,7 +81,7 @@ module RailsConstNormalizer
       return 'controllers' if match?(/_controller$/)
       return 'responders' if match?(/_responder$/)
 
-      'models'
+      'models/concerns'
     end
 
     # @return [String]
