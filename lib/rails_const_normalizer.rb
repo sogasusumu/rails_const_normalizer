@@ -28,11 +28,27 @@ module RailsConstNormalizer
 
     # @return [String]
     def model_concern(format = nil)
-      [
-          self.split('-').first.split('#').first.controller(:with_out_suffix),
-          self.split('-').first.split('#').last.permit!,
-          self.split('-').last.model
-      ].yield_self { |arr| format ? arr.join('/').send(format) : arr.last }
+      model_concern_array.yield_self { |arr| format ? arr.join('/').send(format) : arr.last }
+    end
+
+    # @return [String]
+    def model_concern_controller
+      split('-').first.split('#').first.controller(:with_out_suffix)
+    end
+
+    # @return [String]
+    def model_concern_action
+      split('-').first.split('#').last.permit!
+    end
+
+    # @return [String]
+    def model_concern_model
+      split('-').last.model
+    end
+
+    # @return [Array<String>]
+    def model_concern_array
+      [model_concern_controller, model_concern_action, model_concern_model]
     end
 
     # @return [String]
