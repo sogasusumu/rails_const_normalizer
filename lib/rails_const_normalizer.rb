@@ -28,7 +28,7 @@ module RailsConstNormalizer
 
     def responder(format = nil)
       "#{split('#').first.controller(:with_out_suffix)}/#{split('#').last.permit!}_responder"
-          .yield_self { |str| format ? str.send(format) : str.split('/').last }
+        .yield_self { |str| format ? str.send(format) : str.split('/').last }
     end
 
     # @return [String]
@@ -55,21 +55,21 @@ module RailsConstNormalizer
 
     # @return [String]
     def file_name
-      [self.split('/').last, 'rb'].join('.')
+      [split('/').last, 'rb'].join('.')
     end
 
     # @return [String]
     def file_path
       [
-          self.file_path_prefix,
-          [self, 'rb'].join('.')
+        file_path_prefix,
+        [self, 'rb'].join('.')
       ].join('/')
     end
 
     # @return [String]
     def file_path_prefix
-      return 'controllers' if self.match?(/_controller$/)
-      return 'responders' if self.match?(/_responder$/)
+      return 'controllers' if match?(/_controller$/)
+      return 'responders' if match?(/_responder$/)
 
       'models'
     end
