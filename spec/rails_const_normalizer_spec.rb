@@ -208,6 +208,40 @@ RSpec.describe RailsConstNormalizer do
         it_behaves_like :should_return_expected
       end
     end
+
+    context :interactor do
+      let(:type) { :interactor }
+      let(:controller) { 'controller_name' }
+      let(:action) { 'index' }
+      let(:receiver) { "#{controller}##{action}" }
+
+      shared_examples :should_return_expected do
+        let(:actual) { receiver.to(type, format) }
+        it { expect(actual).to eq expected }
+      end
+
+      let(:format) { nil }
+      let(:expected) { "#{action}_interactor" }
+      it_behaves_like :should_return_expected
+
+      context :klass do
+        let(:format) { :klass }
+        let(:expected) { "#{controller.classify.pluralize}::#{action.classify}Interactor" }
+        it_behaves_like :should_return_expected
+      end
+
+      context :file_name do
+        let(:format) { :file_name }
+        let(:expected) { "#{action}_interactor.rb" }
+        it_behaves_like :should_return_expected
+      end
+
+      context :file_path do
+        let(:format) { :file_path }
+        let(:expected) { "interactors/#{controller.pluralize}/#{action}_interactor.rb" }
+        it_behaves_like :should_return_expected
+      end
+    end
   end
 
   describe :actions do

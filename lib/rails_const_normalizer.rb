@@ -27,6 +27,14 @@ module RailsConstNormalizer
     end
 
     # @return [String]
+    def interactor(format = nil)
+      [
+        split('#').first.controller(:with_out_suffix),
+        [split('#').last.permit!, 'interactor'].join('_')
+      ].yield_self { |arr| format ? arr.join('/').send(format) : arr.last }
+    end
+
+    # @return [String]
     def model_concern(format = nil)
       model_concern_array.yield_self { |arr| format ? arr.join('/').send(format) : arr.last }
     end
@@ -96,6 +104,7 @@ module RailsConstNormalizer
     def file_path_prefix
       return 'controllers' if match?(/_controller$/)
       return 'responders' if match?(/_responder$/)
+      return 'interactors' if match?(/interactor$/)
 
       'models/concerns'
     end
