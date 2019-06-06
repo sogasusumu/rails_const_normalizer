@@ -91,6 +91,12 @@ RSpec.describe RailsConstNormalizer do
         it_behaves_like :format_variations
       end
 
+      context :file_path do
+        let(:format) { :file_path }
+        let(:expected) { "controllers/names_#{suffix}.rb" }
+        it_behaves_like :format_variations
+      end
+
       context :klass do
         let(:format) { :klass }
         let(:expected) { "Names#{suffix.camelize}" }
